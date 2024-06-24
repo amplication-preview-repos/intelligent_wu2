@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Compound {
+  createdAt        DateTime    @default(now())
+  id               String      @id @default(cuid())
+  inChI            String?
+  iupacName        String?
+  molecularFormula String?
+  molecularWeight  Float?
+  name             String?
+  properties       Property[]
+  references       Reference[]
+  smiles           String?
+  synonyms         Synonym[]
+  updatedAt        DateTime    @updatedAt
+}
+
+model Synonym {
+  compound   Compound? @relation(fields: [compoundId], references: [id])
+  compoundId String?
+  createdAt  DateTime  @default(now())
+  id         String    @id @default(cuid())
+  synonym    String?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Reference {
+  authors    String?
+  compound   Compound? @relation(fields: [compoundId], references: [id])
+  compoundId String?
+  createdAt  DateTime  @default(now())
+  doi        String?
+  id         String    @id @default(cuid())
+  journal    String?
+  title      String?
+  updatedAt  DateTime  @updatedAt
+  year       Int?
+}
+
+model Property {
+  compound     Compound? @relation(fields: [compoundId], references: [id])
+  compoundId   String?
+  createdAt    DateTime  @default(now())
+  id           String    @id @default(cuid())
+  propertyType String?
+  updatedAt    DateTime  @updatedAt
+  value        String?
+}
